@@ -1,7 +1,8 @@
 pipeline {
   agent {
     dockerfile {
-      reuseNode true
+      label 'docker'
+      additionalBuildArgs '--build-arg K_COMMIT=$(cat deps/k_release)'
     }
   }
   options {
@@ -19,24 +20,7 @@ pipeline {
     stage("Test compilation") {
       when { changeRequest() }
       steps {
-        dir ('llvm-backend') {
-          checkout([$class: 'GitSCM',
-          branches: [[name: '*/master']],
-          extensions: [[$class: 'SubmoduleOption',
-                        disableSubmodules: false,
-                        parentCredentials: false,
-                        recursiveSubmodules: true,
-                        reference: '',
-                        trackingSubmodules: false]],
-          userRemoteConfigs: [[url: 'git@github.com:kframework/llvm-backend.git']]])
-          sh '''
-            mkdir build
-            cd build
-            cmake .. -DCMAKE_BUILD_TYPE=Release
-            make include
-          '''
-        }
-        dir ('libff') {
+        dir ('deps/libff') {
           checkout([$class: 'GitSCM',
           branches: [[name: '*/master']],
           extensions: [[$class: 'SubmoduleOption',
@@ -49,14 +33,28 @@ pipeline {
           sh '''
             mkdir build
             cd build
-            cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install
+            cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../../../install
             make -j16
             make install
           '''
         }
-        sh 'make -j16'
+        dir ('deps/cryptopp') {
+          checkout([$class: 'GitSCM',
+          branches: [[name: 'refs/tags/CRYPTOPP_8_2_0']],
+          extensions: [[$class: 'SubmoduleOption',
+                        disableSubmodules: false,
+                        parentCredentials: false,
+                        recursiveSubmodules: true,
+                        reference: '',
+                        trackingSubmodules: false]], 
+          userRemoteConfigs: [[url: 'git@https://github.com/weidai11/cryptopp.git']]])
+          sh '''
+            make -j16
+	    make install PREFIX=../../install
+          '''
+        }
+        sh 'make -j16 INCLUDE_PATH=install/include LIBRARY_PATH=install/lib'
       }
-    }
     stage('Deploy') {
       when { branch 'master' }
       steps {

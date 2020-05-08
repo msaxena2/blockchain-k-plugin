@@ -19,6 +19,7 @@ RUN    apt-get update                \
             libsecp256k1-dev         \
             libssl-dev               \
             libyaml-dev              \
+            pandoc                   \
             pkg-config               \
             protobuf-compiler        \
             rapidjson-dev            \
