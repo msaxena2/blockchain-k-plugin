@@ -15,74 +15,75 @@ void runKServer(httplib::Server *svr);
 void countBrackets(const char *buffer, size_t len);
 bool doneReading (const char *buffer, int len);
 
-static bool K_SHUTDOWNABLE;
-static bool K_NOTIFICATIONS;
-static uint32_t K_SCHEDULE_TAG;
-static int K_CHAINID;
-static int K_DEPTH;
-static int K_WRITE_FD;
-static int K_READ_FD;
+// static bool K_SHUTDOWNABLE;
+// static bool K_NOTIFICATIONS;
+// static uint32_t K_SCHEDULE_TAG;
+// static int K_CHAINID;
+// static int K_DEPTH;
+// static int K_WRITE_FD;
+// static int K_READ_FD;
+//
+// int brace_counter_, bracket_counter_, object_counter_;
+//
+// static std::string FRONTIER = "frontier";
+// static std::string HOMESTEAD = "homestead";
+// static std::string TANGERINE_WHISTLE = "tangerine_whistle";
+// static std::string SPURIOUS_DRAGON = "spurious_dragon";
+// static std::string BYZANTIUM = "byzantium";
+// static std::string CONSTANTINOPLE = "constantinople";
+// static std::string PETERSBURG = "petersburg";
+// static std::string ISTANBUL = "istanbul";
 
-int brace_counter_, bracket_counter_, object_counter_;
-
-static std::string FRONTIER = "frontier";
-static std::string HOMESTEAD = "homestead";
-static std::string TANGERINE_WHISTLE = "tangerine_whistle";
-static std::string SPURIOUS_DRAGON = "spurious_dragon";
-static std::string BYZANTIUM = "byzantium";
-static std::string CONSTANTINOPLE = "constantinople";
-static std::string PETERSBURG = "petersburg";
-static std::string ISTANBUL = "istanbul";
-
-DEFINE_int32(port, 8545, "Port to listen on with HTTP protocol");
-DEFINE_int32(depth, -1, "For debugging, stop execution at a certain depth.");
-DEFINE_string(host, "localhost", "IP/Hostname to bind to");
-DEFINE_bool(shutdownable, false, "Allow `firefly_shutdown` message to kill server");
-DEFINE_bool(dump, false, "Dump the K Server configuration on shutdown");
-DEFINE_bool(respond_to_notifications, false, "Respond to incoming notification messages as normal messages");
-DEFINE_string(hardfork, "istanbul", "Ethereum client hardfork. Supported: 'frontier', "
-             "'homestead', 'tangerine_whistle', 'spurious_dragon', 'byzantium', "
-             "'constantinople', 'petersburg', 'istanbul'");
-DEFINE_int32(networkId, 28346, "Set network chain id");
-DEFINE_bool(vmversion, false, "Display current VM version");
+// DEFINE_int32(port, 8545, "Port to listen on with HTTP protocol");
+// DEFINE_int32(depth, -1, "For debugging, stop execution at a certain depth.");
+// DEFINE_string(host, "localhost", "IP/Hostname to bind to");
+// DEFINE_bool(shutdownable, false, "Allow `firefly_shutdown` message to kill server");
+// DEFINE_bool(dump, false, "Dump the K Server configuration on shutdown");
+// DEFINE_bool(respond_to_notifications, false, "Respond to incoming notification messages as normal messages");
+// DEFINE_string(hardfork, "istanbul", "Ethereum client hardfork. Supported: 'frontier', "
+//              "'homestead', 'tangerine_whistle', 'spurious_dragon', 'byzantium', "
+//              "'constantinople', 'petersburg', 'istanbul'");
+// DEFINE_int32(networkId, 28346, "Set network chain id");
+// DEFINE_bool(vmversion, false, "Display current VM version");
 
 int main(int argc, char **argv) {
+  std::cout << "Ok this works now!" << std::endl;
 
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  K_SCHEDULE_TAG = getTagForSymbolName("LblISTANBUL'Unds'EVM{}");
+ // K_SCHEDULE_TAG = getTagForSymbolName("LblISTANBUL'Unds'EVM{}");
 
-  if (FLAGS_vmversion) {
-    std::cout << argv[0] << " version " << VM_VERSION << std::endl;
-    return 0;
-  }
+  //if (FLAGS_vmversion) {
+  //  std::cout << argv[0] << " version " << VM_VERSION << std::endl;
+  //  return 0;
+  //}
 
-  K_CHAINID = FLAGS_networkId;
-  K_SHUTDOWNABLE = FLAGS_shutdownable;
-  K_DEPTH = FLAGS_depth;
-  K_NOTIFICATIONS = FLAGS_respond_to_notifications;
-
-  if (FLAGS_hardfork == FRONTIER) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblFRONTIER'Unds'EVM{}");
-  } else if (FLAGS_hardfork == HOMESTEAD) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblHOMESTEAD'Unds'EVM{}");
-  } else if (FLAGS_hardfork == TANGERINE_WHISTLE) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblTANGERINE'Unds'WHISTLE'Unds'EVM{}");
-  } else if (FLAGS_hardfork == SPURIOUS_DRAGON) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblSPURIOUS'Unds'DRAGON'Unds'EVM{}");
-  } else if (FLAGS_hardfork == BYZANTIUM) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblBYZANTIUM'Unds'EVM{}");
-  } else if (FLAGS_hardfork == CONSTANTINOPLE) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblCONSTANTINOPLE'Unds'EVM{}");
-  } else if (FLAGS_hardfork == PETERSBURG) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblPETERSBURG'Unds'EVM{}");
-  } else if (FLAGS_hardfork == ISTANBUL) {
-    K_SCHEDULE_TAG = getTagForSymbolName("LblISTANBUL'Unds'EVM{}");
-  } else {
-      std::cerr << "Invalid hardfork found: " << FLAGS_hardfork << std::endl;
-      return 1;
-  }
-
+//  K_CHAINID = FLAGS_networkId;
+//  K_SHUTDOWNABLE = FLAGS_shutdownable;
+//  K_DEPTH = FLAGS_depth;
+//  K_NOTIFICATIONS = FLAGS_respond_to_notifications;
+//
+//  if (FLAGS_hardfork == FRONTIER) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblFRONTIER'Unds'EVM{}");
+//  } else if (FLAGS_hardfork == HOMESTEAD) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblHOMESTEAD'Unds'EVM{}");
+//  } else if (FLAGS_hardfork == TANGERINE_WHISTLE) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblTANGERINE'Unds'WHISTLE'Unds'EVM{}");
+//  } else if (FLAGS_hardfork == SPURIOUS_DRAGON) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblSPURIOUS'Unds'DRAGON'Unds'EVM{}");
+//  } else if (FLAGS_hardfork == BYZANTIUM) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblBYZANTIUM'Unds'EVM{}");
+//  } else if (FLAGS_hardfork == CONSTANTINOPLE) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblCONSTANTINOPLE'Unds'EVM{}");
+//  } else if (FLAGS_hardfork == PETERSBURG) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblPETERSBURG'Unds'EVM{}");
+//  } else if (FLAGS_hardfork == ISTANBUL) {
+//    K_SCHEDULE_TAG = getTagForSymbolName("LblISTANBUL'Unds'EVM{}");
+//  } else {
+//      std::cerr << "Invalid hardfork found: " << FLAGS_hardfork << std::endl;
+//      return 1;
+//  }
+//
   httplib::Server svr;
 
   // Start KServer in a separate thread
@@ -135,22 +136,22 @@ void runKServer(httplib::Server *svr) {
   static blockheader injHeaderSchedule           = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortSchedule{}, SortKItem{}}"));
   static blockheader injHeaderInt                = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortInt{}, SortKItem{}}"));
   static blockheader injHeaderBool               = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortBool{}, SortKItem{}}"));
-  static blockheader injHeaderEthereumSimulation = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortEthereumSimulation{}, SortKItem{}}"));
+  //static blockheader injHeaderEthereumSimulation = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortEthereumSimulation{}, SortKItem{}}"));
 
   initStaticObjects();
   set_gc_interval(10000);
 
   // create `Init` configuration variable entries
 
-  static uint64_t mode = (((uint64_t)getTagForSymbolName("LblNORMAL{}")) << 32) | 1;
-  inj *modeinj = (inj *)koreAlloc(sizeof(inj));
-  modeinj->h = injHeaderMode;
-  modeinj->data = (block*)mode;
-
-  uint64_t schedule = (((uint64_t)K_SCHEDULE_TAG) << 32) | 1;
-  inj *scheduleinj = (inj *)koreAlloc(sizeof(inj));
-  scheduleinj->h = injHeaderSchedule;
-  scheduleinj->data = (block*)schedule;
+//  static uint64_t mode = (((uint64_t)getTagForSymbolName("LblNORMAL{}")) << 32) | 1;
+//  inj *modeinj = (inj *)koreAlloc(sizeof(inj));
+//  modeinj->h = injHeaderMode;
+//  modeinj->data = (block*)mode;
+//
+//  uint64_t schedule = (((uint64_t)K_SCHEDULE_TAG) << 32) | 1;
+//  inj *scheduleinj = (inj *)koreAlloc(sizeof(inj));
+//  scheduleinj->h = injHeaderSchedule;
+//  scheduleinj->data = (block*)schedule;
 
   int input[2], output[2];
   if (pipe(input)) {
