@@ -19,12 +19,12 @@ bool doneReading (const char *buffer, int len);
 // static bool K_NOTIFICATIONS;
 // static uint32_t K_SCHEDULE_TAG;
 // static int K_CHAINID;
-// static int K_DEPTH;
-// static int K_WRITE_FD;
-// static int K_READ_FD;
-//
-// int brace_counter_, bracket_counter_, object_counter_;
-//
+static int K_DEPTH;
+static int K_WRITE_FD;
+static int K_READ_FD;
+
+int brace_counter_, bracket_counter_, object_counter_;
+
 // static std::string FRONTIER = "frontier";
 // static std::string HOMESTEAD = "homestead";
 // static std::string TANGERINE_WHISTLE = "tangerine_whistle";
@@ -34,17 +34,17 @@ bool doneReading (const char *buffer, int len);
 // static std::string PETERSBURG = "petersburg";
 // static std::string ISTANBUL = "istanbul";
 
-// DEFINE_int32(port, 8545, "Port to listen on with HTTP protocol");
-// DEFINE_int32(depth, -1, "For debugging, stop execution at a certain depth.");
-// DEFINE_string(host, "localhost", "IP/Hostname to bind to");
-// DEFINE_bool(shutdownable, false, "Allow `firefly_shutdown` message to kill server");
-// DEFINE_bool(dump, false, "Dump the K Server configuration on shutdown");
-// DEFINE_bool(respond_to_notifications, false, "Respond to incoming notification messages as normal messages");
-// DEFINE_string(hardfork, "istanbul", "Ethereum client hardfork. Supported: 'frontier', "
-//              "'homestead', 'tangerine_whistle', 'spurious_dragon', 'byzantium', "
-//              "'constantinople', 'petersburg', 'istanbul'");
-// DEFINE_int32(networkId, 28346, "Set network chain id");
-// DEFINE_bool(vmversion, false, "Display current VM version");
+DEFINE_int32(port, 8545, "Port to listen on with HTTP protocol");
+DEFINE_int32(depth, -1, "For debugging, stop execution at a certain depth.");
+DEFINE_string(host, "localhost", "IP/Hostname to bind to");
+//DEFINE_bool(shutdownable, false, "Allow `firefly_shutdown` message to kill server");
+DEFINE_bool(dump, false, "Dump the K Server configuration on shutdown");
+//DEFINE_bool(respond_to_notifications, false, "Respond to incoming notification messages as normal messages");
+//DEFINE_string(hardfork, "istanbul", "Ethereum client hardfork. Supported: 'frontier', "
+//             "'homestead', 'tangerine_whistle', 'spurious_dragon', 'byzantium', "
+//             "'constantinople', 'petersburg', 'istanbul'");
+//DEFINE_int32(networkId, 28346, "Set network chain id");
+//DEFINE_bool(vmversion, false, "Display current VM version");
 
 int main(int argc, char **argv) {
   std::cout << "Ok this works now!" << std::endl;
@@ -125,18 +125,18 @@ int main(int argc, char **argv) {
 }
 
 void runKServer(httplib::Server *svr) {
-  int chainId = K_CHAINID;
-  bool shutdownable = K_SHUTDOWNABLE, notifications = K_NOTIFICATIONS;
+  //int chainId = K_CHAINID;
+  //bool shutdownable = K_SHUTDOWNABLE, notifications = K_NOTIFICATIONS;
   in_addr address;
   inet_aton("127.0.0.1", &address);
 
   // injections to KItem for initial configuration variables
 
-  static blockheader injHeaderMode               = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortMode{}, SortKItem{}}"));
-  static blockheader injHeaderSchedule           = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortSchedule{}, SortKItem{}}"));
-  static blockheader injHeaderInt                = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortInt{}, SortKItem{}}"));
-  static blockheader injHeaderBool               = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortBool{}, SortKItem{}}"));
-  //static blockheader injHeaderEthereumSimulation = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortEthereumSimulation{}, SortKItem{}}"));
+  //static blockheader injHeaderMode     = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortMode{}, SortKItem{}}"));
+ // static blockheader injHeaderSchedule = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortSchedule{}, SortKItem{}}"));
+  static blockheader injHeaderInt      = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortInt{}, SortKItem{}}"));
+  //static blockheader injHeaderBool     = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortBool{}, SortKItem{}}"));
+  static blockheader injHeaderCommands = getBlockHeaderForSymbol(getTagForSymbolName("inj{SortCommands{}, SortKItem{}}"));
 
   initStaticObjects();
   set_gc_interval(10000);
@@ -177,35 +177,35 @@ void runKServer(httplib::Server *svr) {
   outputinj->data = move_int(output_z);
   K_READ_FD = output[0];
 
-  boolinj *shutdownableinj = (boolinj *)koreAlloc(sizeof(boolinj));
-  shutdownableinj->h = injHeaderBool;
-  shutdownableinj->data = shutdownable;
+//  boolinj *shutdownableinj = (boolinj *)koreAlloc(sizeof(boolinj));
+//  shutdownableinj->h = injHeaderBool;
+//  shutdownableinj->data = shutdownable;
+//
+//  boolinj *notificationsinj = (boolinj *)koreAlloc(sizeof(boolinj));
+//  notificationsinj->h = injHeaderBool;
+//  notificationsinj->data = notifications;
 
-  boolinj *notificationsinj = (boolinj *)koreAlloc(sizeof(boolinj));
-  notificationsinj->h = injHeaderBool;
-  notificationsinj->data = notifications;
-
-  zinj *chaininj = (zinj *)koreAlloc(sizeof(zinj));
-  chaininj->h = injHeaderInt;
-  mpz_t chainid;
-  mpz_init_set_si(chainid, chainId);
-  chaininj->data = move_int(chainid);
+//  zinj *chaininj = (zinj *)koreAlloc(sizeof(zinj));
+//  chaininj->h = injHeaderInt;
+//  mpz_t chainid;
+//  mpz_init_set_si(chainid, chainId);
+//  chaininj->data = move_int(chainid);
 
   static uint64_t accept = (((uint64_t)getTagForSymbolName("Lblaccept{}")) << 32) | 1;
   inj *kinj = (inj *)koreAlloc(sizeof(inj));
-  kinj->h = injHeaderEthereumSimulation;
+  kinj->h = injHeaderCommands;
   kinj->data = (block *)accept;
 
   // build `Init` configuration variable `Map`
 
-  map withSched = hook_MAP_element(configvar("$SCHEDULE"), (block *)scheduleinj);
-  map withMode = hook_MAP_update(&withSched, configvar("$MODE"), (block *)modeinj);
-  map withInput = hook_MAP_update(&withMode, configvar("$INPUT"), (block *)inputinj);
+  //map withSched = hook_MAP_element(configvar("$SCHEDULE"), (block *)scheduleinj);
+  //map withMode = hook_MAP_update(&withSched, configvar("$MODE"), (block *)modeinj);
+  map withInput = hook_MAP_element(configvar("$INPUT"), (block *)inputinj);
   map withOutput = hook_MAP_update(&withInput, configvar("$OUTPUT"), (block *)outputinj);
-  map withShutdownable = hook_MAP_update(&withOutput, configvar("$SHUTDOWNABLE"), (block *)shutdownableinj);
-  map withChain = hook_MAP_update(&withShutdownable, configvar("$CHAINID"), (block *)chaininj);
-  map withNotifications = hook_MAP_update(&withChain, configvar("$NOTIFICATIONS"), (block*)notificationsinj);
-  map init = hook_MAP_update(&withNotifications, configvar("$PGM"), (block *)kinj);
+  //map withShutdownable = hook_MAP_update(&withOutput, configvar("$SHUTDOWNABLE"), (block *)shutdownableinj);
+  //map withChain = hook_MAP_update(&withShutdownable, configvar("$CHAINID"), (block *)chaininj);
+  //map withNotifications = hook_MAP_update(&withChain, configvar("$NOTIFICATIONS"), (block*)notificationsinj);
+  map init = hook_MAP_update(&withOutput, configvar("$PGM"), (block *)kinj);
 
   // invoke the rewriter
   static uint32_t tag2 = getTagForSymbolName("LblinitGeneratedTopCell{}");
