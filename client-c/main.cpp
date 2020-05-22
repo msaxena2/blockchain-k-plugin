@@ -47,7 +47,7 @@ DEFINE_bool(dump, false, "Dump the K Server configuration on shutdown");
 //DEFINE_bool(vmversion, false, "Display current VM version");
 
 int main(int argc, char **argv) {
-  std::cout << "Ok this works now!" << std::endl;
+//  std::cout << "Ok this works now!" << std::endl;
 
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 
 //  K_CHAINID = FLAGS_networkId;
 //  K_SHUTDOWNABLE = FLAGS_shutdownable;
-//  K_DEPTH = FLAGS_depth;
+    K_DEPTH = FLAGS_depth;
 //  K_NOTIFICATIONS = FLAGS_respond_to_notifications;
 //
 //  if (FLAGS_hardfork == FRONTIER) {
@@ -118,6 +118,7 @@ int main(int argc, char **argv) {
   std::thread t2([&] () {
     svr.listen(FLAGS_host.c_str(), FLAGS_port);
   });
+  //svr.listen(FLAGS_host.c_str(), FLAGS_port);
 
   t2.join();
 
